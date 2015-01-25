@@ -24,6 +24,7 @@ addons:
 before_install:
   - (curl https://raw.githubusercontent.com/creationix/nvm/v0.23.2/install.sh | bash) || true
   - source ~/.bashrc || true
+  - nvm --version
 
 before_script:
   - "mysql -e 'create database sequelize_test;'"
