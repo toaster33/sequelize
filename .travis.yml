@@ -11,11 +11,11 @@ cache:
 
 env:
   - DB=mysql DIALECT=mysql
-  - DB=mysql DIALECT=postgres
-  - DB=mysql DIALECT=postgres-native
-  - DB=mysql DIALECT=sqlite
-  - DB=mysql DIALECT=mariadb
-  - DB=mysql DIALECT=mssql
+  # - DB=mysql DIALECT=postgres
+  # - DB=mysql DIALECT=postgres-native
+  # - DB=mysql DIALECT=sqlite
+  # - DB=mysql DIALECT=mariadb
+  # - DB=mysql DIALECT=mssql
 
 addons:
   postgresql: "9.3"
@@ -31,6 +31,7 @@ branches:
   only:
     - master
     - 1.7.0
+    - iojs
 
 matrix:
   fast_finish: true
@@ -40,9 +41,3 @@ matrix:
   allow_failures:
     - node_js: "0.10"
       env: COVERAGE=true
-
-notifications:
-  hipchat:
-    - 40e8850aaba9854ac4c9963bd33f8b@253477
-  irc:
-    - "chat.freenode.net#sequelizejs"
