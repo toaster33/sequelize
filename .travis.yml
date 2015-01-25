@@ -21,6 +21,9 @@ env:
 addons:
   postgresql: "9.3"
 
+before_install:
+  - curl https://raw.githubusercontent.com/creationix/nvm/v0.23.2/install.sh | bash
+
 before_script:
   - "mysql -e 'create database sequelize_test;'"
   - "psql -c 'create database sequelize_test;' -U postgres"
