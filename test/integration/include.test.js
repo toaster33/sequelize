@@ -77,9 +77,7 @@ describe(Support.getTestDialectTeaser('Include'), function() {
               ]
             }
           ],
-          where: {
-            'Department.Lead.name': 'OurLead'
-          }
+          where: Sequelize.or({'President.name': 'OurLead'}, {'Department.Lead.name': 'OurLead'})
         };
         return Company.findAll(query, {logging: console.log});
       }).then(function (results) {
