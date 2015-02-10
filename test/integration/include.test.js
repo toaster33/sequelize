@@ -20,6 +20,74 @@ var sortById = function(a, b) {
 
 describe(Support.getTestDialectTeaser('Include'), function() {
   describe('find', function() {
+
+    it.only('should retrieve using association reference with a where', function (done) {
+      var Company = this.sequelize.define('Company', {name: DataTypes.STRING})
+        , Section = this.sequelize.define('Departments', {name: DataTypes.STRING})
+        , User = this.sequelize.define('Users', {name: DataTypes.STRING});
+
+      Company.belongsTo(User, {as: 'President', foreignKey: 'presidentId'});
+      Company.belongsTo(Section, {as: 'Department', foreignKey: 'departmentId'});
+      Section.belongsTo(User, {as: 'Lead', foreignKey: 'leadId'});
+
+      var company;
+      var department;
+      return this.sequelize.sync({force: true}).then(function() {
+        return Company.create({
+          name: 'MyCompany'
+        });
+      }).then(function (persisted) {
+        company = persisted;
+        return User.create({
+          name: 'OurPresident'
+        });
+      }).then(function (president) {
+        return company.setPresident(president);
+      }).then(function () {
+        return Section.create({
+          name: 'MyDepartment'
+        });
+      }).then(function (persisted) {
+        department = persisted;
+        return company.setDepartment(persisted);
+      }).then(function () {
+        return User.create({
+          name: 'OurLead'
+        });
+      }).then(function (lead) {
+        return department.setLead(lead);
+      }).then(function () {
+        var query = {
+          include: [
+            {
+              model: Company.associations.President.target,
+              as: Company.associations.President.as,
+              required: false
+            },
+            {
+              model: Company.associations.Department.target,
+              as: Company.associations.Department.as,
+              required: false,
+              include: [
+                {
+                  model: Section.associations.Lead.target,
+                  as: Section.associations.Lead.as,
+                  required: false
+                }
+              ]
+            }
+          ],
+          where: {
+            'Department.Lead.name': 'OurLead'
+          }
+        };
+        return Company.findAll(query, {logging: console.log});
+      }).then(function (results) {
+        expect(results.length).to.equal(1);
+        done();
+      }, done);
+    });
+
     it('should support an empty belongsTo include', function(done) {
       var Company = this.sequelize.define('Company', {})
         , User = this.sequelize.define('User', {});
